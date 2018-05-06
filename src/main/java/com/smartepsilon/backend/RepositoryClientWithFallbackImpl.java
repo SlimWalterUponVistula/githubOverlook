@@ -38,9 +38,9 @@ public class RepositoryClientWithFallbackImpl implements RepositoryClientWithFal
     }
 
     private Response tryInternallyFirstWithOriginalThenWithFallback(String owner,
-            String id,
-            Callable<Response> callableTask,
-            boolean fallbackTry) {
+                                                                    String id,
+                                                                    Callable<Response> callableTask,
+                                                                    boolean fallbackTry) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         int trial = 0;
         while (trial < retriesThreshold) {
