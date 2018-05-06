@@ -12,7 +12,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RepoViewApplicationInitializer implements WebApplicationInitializer {
 
-	@Override
+    @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         servletContext.addListener(new ContextLoaderListener(context));

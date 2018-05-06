@@ -6,10 +6,8 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class ExternalServiceUnhealthyMapper implements ExceptionMapper<ExternalServiceUnhealthy> {
-	
-	public Response toResponse(ExternalServiceUnhealthy exception) {
-		return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-				       .entity(exception.getMessage())
-				       .build();
-	}
+
+    public Response toResponse(ExternalServiceUnhealthy exception) {
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(exception.getMessage()).build();
+    }
 }

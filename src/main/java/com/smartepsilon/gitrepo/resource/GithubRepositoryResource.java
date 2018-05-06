@@ -4,5 +4,5 @@ import com.smartepsilon.gitrepo.representation.GithubRepositoryRto;
 
 public interface GithubRepositoryResource {
 
-	GithubRepositoryRto readByOwnerAndName(String owner, String name);
+    GithubRepositoryRto readByOwnerAndName(String owner, String name);
 }

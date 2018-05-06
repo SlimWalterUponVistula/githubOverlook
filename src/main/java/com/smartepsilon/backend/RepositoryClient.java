@@ -4,5 +4,5 @@ import com.smartepsilon.gitrepo.model.GithubRepository;
 
 public interface RepositoryClient {
 
-	GithubRepository getRepository(String owner, String id);
+    GithubRepository getRepository(String owner, String id);
 }

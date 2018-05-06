@@ -24,55 +24,50 @@ import com.smartepsilon.gitrepo.config.JerseyApplicationContextLoader;
 
 public class JerseyTestNG extends JerseyTest {
 
-	private static final Integer SUCCESS_CODE = 200;
+    private static final Integer SUCCESS_CODE = 200;
 
-	private static final Integer MOCK_SERVER_PORT = 8085;
-	
-	private static final String SAMPLE_JSON_RESPONSE = "/tspResponse.json";
-	
-	private static final String TSP_REPO_PREPARED_PATH = "/repos/mhahsler/TSP";
-	
-	private ClientAndServer mockServer;
-	
-	@BeforeMethod
-	public void beforeMethod() throws Exception {
-		this.setUp();
-		this.mockServer = startClientAndServer(MOCK_SERVER_PORT);
-		mockExpectedResponseWhenApplicationTriesToFetchRepositoryByOwnerAndName();
-	}
-	
-	@AfterMethod
-	public void afterMethod() throws Exception {
-		this.tearDown();
-		this.mockServer.stop();
-	}
-	
-	@Override
-	protected Application configure() {
-		ResourceConfig resourceConfig = new JerseyApplicationContextLoader();
-		ApplicationContext annotationBasedConfig = new AnnotationConfigApplicationContext(RepoViewApplicationConfig.class);
-		resourceConfig.property("contextConfig", annotationBasedConfig);
-		return resourceConfig;
-	}
-	
-	protected void mockExpectedResponseWhenApplicationTriesToFetchRepositoryByOwnerAndName() throws IOException {
-		new MockServerClient("localhost", MOCK_SERVER_PORT)
-				.when(
-						request()
-				            .withMethod(HttpMethod.GET.name())
-						    .withPath(TSP_REPO_PREPARED_PATH)) 
-				.respond(
-						response()
-						    .withBody(getSampleJsonBody())
-						    .withStatusCode(SUCCESS_CODE));
-	}
+    private static final Integer MOCK_SERVER_PORT = 8085;
 
-	protected String resolve(String resourcePath, String owner, String repoName) {
-		return String.format(resourcePath, owner, repoName);
-	}
-	
-	private String getSampleJsonBody() throws IOException {
-		InputStream resourceAsStream = this.getClass().getResourceAsStream(SAMPLE_JSON_RESPONSE);
-		return IOUtils.toString(resourceAsStream);
-	}
+    private static final String SAMPLE_JSON_RESPONSE = "/tspResponse.json";
+
+    private static final String TSP_REPO_PREPARED_PATH = "/repos/mhahsler/TSP";
+
+    private ClientAndServer mockServer;
+
+    @BeforeMethod
+    public void beforeMethod() throws Exception {
+        this.setUp();
+        this.mockServer = startClientAndServer(MOCK_SERVER_PORT);
+        mockExpectedResponseWhenApplicationTriesToFetchRepositoryByOwnerAndName();
+    }
+
+    @AfterMethod
+    public void afterMethod() throws Exception {
+        this.tearDown();
+        this.mockServer.stop();
+    }
+
+    @Override
+    protected Application configure() {
+        ResourceConfig resourceConfig = new JerseyApplicationContextLoader();
+        ApplicationContext annotationBasedConfig = new AnnotationConfigApplicationContext(
+                RepoViewApplicationConfig.class);
+        resourceConfig.property("contextConfig", annotationBasedConfig);
+        return resourceConfig;
+    }
+
+    protected void mockExpectedResponseWhenApplicationTriesToFetchRepositoryByOwnerAndName() throws IOException {
+        new MockServerClient("localhost", MOCK_SERVER_PORT)
+                .when(request().withMethod(HttpMethod.GET.name()).withPath(TSP_REPO_PREPARED_PATH))
+                .respond(response().withBody(getSampleJsonBody()).withStatusCode(SUCCESS_CODE));
+    }
+
+    protected String resolve(String resourcePath, String owner, String repoName) {
+        return String.format(resourcePath, owner, repoName);
+    }
+
+    private String getSampleJsonBody() throws IOException {
+        InputStream resourceAsStream = this.getClass().getResourceAsStream(SAMPLE_JSON_RESPONSE);
+        return IOUtils.toString(resourceAsStream);
+    }
 }

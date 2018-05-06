@@ -6,60 +6,60 @@ import java.time.LocalDateTime;
 import com.google.gson.annotations.SerializedName;
 
 public class GithubRepository implements Serializable {
-	
-	private static final long serialVersionUID = 945188191706944161L;
-	
-	@SerializedName("full_name")
-	private String name;
-	
-	private String description;
-	
-	@SerializedName("clone_url")
-	private String cloneUrl;
-	
-	@SerializedName("stargazers_count")
-	private int stargazersCount;
-	
-	@SerializedName("created_at")
-	private LocalDateTime creationDate;
 
-	public String getName() {
-		return name;
-	}
+    private static final long serialVersionUID = 945188191706944161L;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @SerializedName("full_name")
+    private String name;
 
-	public String getDescription() {
-		return description;
-	}
+    private String description;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @SerializedName("clone_url")
+    private String cloneUrl;
 
-	public String getCloneUrl() {
-		return cloneUrl;
-	}
+    @SerializedName("stargazers_count")
+    private int stargazersCount;
 
-	public void setCloneUrl(String cloneUrl) {
-		this.cloneUrl = cloneUrl;
-	}
+    @SerializedName("created_at")
+    private LocalDateTime creationDate;
 
-	public int getStargazersCount() {
-		return stargazersCount;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setStargazersCount(int stargazersCount) {
-		this.stargazersCount = stargazersCount;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCloneUrl() {
+        return cloneUrl;
+    }
+
+    public void setCloneUrl(String cloneUrl) {
+        this.cloneUrl = cloneUrl;
+    }
+
+    public int getStargazersCount() {
+        return stargazersCount;
+    }
+
+    public void setStargazersCount(int stargazersCount) {
+        this.stargazersCount = stargazersCount;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }

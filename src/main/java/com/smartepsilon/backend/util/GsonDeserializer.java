@@ -15,21 +15,21 @@ import com.google.gson.JsonParseException;
 
 public class GsonDeserializer {
 
-	public static final String ISO_REPO_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+    public static final String ISO_REPO_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-	public static final Gson GSON_WITH_LOCAL_DT_DESERIALIZER_AND_ISO_DATE_TIME = new GsonBuilder()
-			.registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-				public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-						throws JsonParseException {
-					return ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime();
-				}
-			}).setDateFormat(ISO_REPO_DATE_TIME_FORMAT).create();
+    public static final Gson GSON_WITH_LOCAL_DT_DESERIALIZER_AND_ISO_DATE_TIME = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                        throws JsonParseException {
+                    return ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime();
+                }
+            }).setDateFormat(ISO_REPO_DATE_TIME_FORMAT).create();
 
-	public static <T> T extractEntityAndUnmarshal(Response response, Class<T> entityClass) {
-		return make(response.readEntity(String.class), entityClass);
-	}
+    public static <T> T extractEntityAndUnmarshal(Response response, Class<T> entityClass) {
+        return make(response.readEntity(String.class), entityClass);
+    }
 
-	private static <T> T make(String jsonString, Class<T> resultClass) {
-		return GSON_WITH_LOCAL_DT_DESERIALIZER_AND_ISO_DATE_TIME.fromJson(jsonString, resultClass);
-	}
+    private static <T> T make(String jsonString, Class<T> resultClass) {
+        return GSON_WITH_LOCAL_DT_DESERIALIZER_AND_ISO_DATE_TIME.fromJson(jsonString, resultClass);
+    }
 }

@@ -11,10 +11,10 @@ import com.smartepsilon.gitrepo.resource.GithubRepositoryResourceImpl;
 @ApplicationPath("/")
 public class JerseyApplicationContextLoader extends ResourceConfig {
 
-	public JerseyApplicationContextLoader() {
-		super();
-		register(RepositoryNotFoundMapper.class);
-		register(ExternalServiceUnhealthyMapper.class);
-		register(GithubRepositoryResourceImpl.class);
-	}
+    public JerseyApplicationContextLoader() {
+        super();
+        register(RepositoryNotFoundMapper.class);
+        register(ExternalServiceUnhealthyMapper.class);
+        register(GithubRepositoryResourceImpl.class);
+    }
 }

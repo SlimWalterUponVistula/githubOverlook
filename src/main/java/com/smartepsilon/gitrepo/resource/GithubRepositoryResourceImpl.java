@@ -14,22 +14,22 @@ import com.smartepsilon.gitrepo.service.GithubRepositoryService;
 
 @Path(GithubRepositoryResourceImpl.BASE_PATH)
 public class GithubRepositoryResourceImpl implements GithubRepositoryResource {
-	
-	static final String BASE_PATH = "/repositories";
-	
-	private final GithubRepositoryService githubRepositoryService;
-	
-	@Autowired
-	public GithubRepositoryResourceImpl(GithubRepositoryService githubRepositoryService) {
-		this.githubRepositoryService = githubRepositoryService;
-	}
-	
-	@GET
-	@Path("/{owner}/{repository-name}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public GithubRepositoryRto readByOwnerAndName(@PathParam("owner") String owner, 
-			                                  @PathParam("repository-name") String repositoryName) {
-		GithubRepository readRepository = githubRepositoryService.readByOwnerAndRepositoryName(owner, repositoryName);
-		return GithubRepositoryToGithubRepositoryRtoTransformer.INSTANCE.apply(readRepository);
-	}
+
+    static final String BASE_PATH = "/repositories";
+
+    private final GithubRepositoryService githubRepositoryService;
+
+    @Autowired
+    public GithubRepositoryResourceImpl(GithubRepositoryService githubRepositoryService) {
+        this.githubRepositoryService = githubRepositoryService;
+    }
+
+    @GET
+    @Path("/{owner}/{repository-name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GithubRepositoryRto readByOwnerAndName(@PathParam("owner") String owner,
+            @PathParam("repository-name") String repositoryName) {
+        GithubRepository readRepository = githubRepositoryService.readByOwnerAndRepositoryName(owner, repositoryName);
+        return GithubRepositoryToGithubRepositoryRtoTransformer.INSTANCE.apply(readRepository);
+    }
 }
