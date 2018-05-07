@@ -1,5 +1,6 @@
 package com.smartepsilon.backend;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -7,6 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +25,10 @@ public class RepositoryClientWithFallbackImpl implements RepositoryClientWithFal
     private final long timeoutMilis;
     private final int retriesThreshold;
 
+    private interface ResponseSupplier {
+        Response supply() throws InterruptedException, ExecutionException, TimeoutException; 
+    }
+    
     public RepositoryClientWithFallbackImpl(final WebTarget webTarget,
                                             final WebTarget fallbackTarget,
                                             final long timeoutMilis,
@@ -33,31 +41,53 @@ public class RepositoryClientWithFallbackImpl implements RepositoryClientWithFal
 
     @Override
     public Response getRepository(final String owner, final String id) {
+        return tryTimesPrimary(owner, id, retriesThreshold)
+                   .orElseGet(() -> tryTimesWithFallback(owner, id, retriesThreshold)
+                                        .orElseThrow(() -> new ExternalServiceUnhealthy(retriesThreshold)));
+    }
+    
+    private Optional<Response> tryTimesPrimary(String owner, 
+                                               String id, 
+                                               int nTimes) {
         Callable<Response> pureTask = supplyTaskDefinition(owner, id);
-        return tryInternallyFirstWithOriginalThenWithFallback(owner, id, pureTask, false);
+        return nTimesAtMost(owner, id, nTimes, pureTask);
     }
 
-    private Response tryInternallyFirstWithOriginalThenWithFallback(String owner,
-                                                                    String id,
-                                                                    Callable<Response> callableTask,
-                                                                    boolean fallbackTry) {
+    private Optional<Response> tryTimesWithFallback(String owner, 
+                                                    String id, 
+                                                    int nTimes) {
+        Callable<Response> fallbackTask = supplyFallbackTask(owner, id);
+        return nTimesAtMost(owner, id, nTimes, fallbackTask);
+    }
+
+    private Optional<Response> nTimesAtMost(String owner, 
+                                            String id, 
+                                            int n,
+                                            Callable<Response> task) {
+        
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        int trial = 0;
-        while (trial < retriesThreshold) {
+        Supplier<Optional<Response>> catchingSupplier = () -> {
             try {
-                Future<Response> submittedTask = executor.submit(callableTask);
-                return submittedTask.get(timeoutMilis, TimeUnit.MILLISECONDS);
+                return Optional.of(getResponseSupplier(executor, task).supply());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                if (++trial == retriesThreshold) {
-                    if (fallbackTry) {
-                        throw new ExternalServiceUnhealthy(retriesThreshold, e);
-                    }
-                    Callable<Response> fallbackTask = supplyFallbackTask(owner, id);
-                    return tryInternallyFirstWithOriginalThenWithFallback(owner, id, fallbackTask, true);
-                }
+                return Optional.empty();
             }
-        }
-        throw new IllegalStateException("Unreachable state!");
+        };
+        return Stream.iterate(catchingSupplier, i -> i)
+                .limit(n)
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .findFirst()
+                .flatMap(Function.identity());
+    }
+    
+    private ResponseSupplier getResponseSupplier(ExecutorService executor, Callable<Response> callableTask) throws InterruptedException, 
+                                                                                                                   ExecutionException, 
+                                                                                                                   TimeoutException {
+         return () -> {
+             Future<Response> submittedTask = executor.submit(callableTask);
+             return submittedTask.get(timeoutMilis, TimeUnit.MILLISECONDS);
+         };
     }
 
     private Callable<Response> supplyFallbackTask(String owner, String id) {

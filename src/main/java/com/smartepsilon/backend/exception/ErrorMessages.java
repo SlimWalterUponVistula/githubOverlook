@@ -8,6 +8,6 @@ class ErrorMessages {
             .append("Unhealthy service state detected after [%s] number of attemps! ")
             .append("Circuit breaker should redirect somewhere but currently no requirements are known regarding the matter.\n")
             .append("A default fallback is the original resource which was tried again the same number of times.\n")
-            .append("Underlying exception was [%s].\nTry again later or contact external host administration staff!")
+            .append("\nTry again later or contact external host administration staff!")
             .toString();
 }
