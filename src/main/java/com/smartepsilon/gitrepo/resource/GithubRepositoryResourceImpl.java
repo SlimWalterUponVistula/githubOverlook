@@ -28,7 +28,7 @@ public class GithubRepositoryResourceImpl implements GithubRepositoryResource {
     @Path("/{owner}/{repository-name}")
     @Produces(MediaType.APPLICATION_JSON)
     public GithubRepositoryRto readByOwnerAndName(@PathParam("owner") String owner,
-            @PathParam("repository-name") String repositoryName) {
+                                                  @PathParam("repository-name") String repositoryName) {
         GithubRepository readRepository = githubRepositoryService.readByOwnerAndRepositoryName(owner, repositoryName);
         return GithubRepositoryToGithubRepositoryRtoTransformer.INSTANCE.apply(readRepository);
     }
