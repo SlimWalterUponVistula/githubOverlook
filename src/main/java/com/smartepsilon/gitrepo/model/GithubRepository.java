@@ -62,4 +62,21 @@ public class GithubRepository implements Serializable {
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
+    
+    public static Builder builder() {
+        return new Builder();
+    }
+    
+    public static class Builder {
+        private GithubRepository repository = new GithubRepository();
+        
+        public Builder withName(String name) {
+            repository.setName(name);
+            return this;
+        }
+        
+        public GithubRepository build() {
+            return repository;
+        }
+    }
 }
