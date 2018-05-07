@@ -37,9 +37,9 @@ public class RepoViewApplicationComponentsIntegrationTest {
 
     private static final String EXPECTED_CREATED_AT = "2015-10-10T02:54:22Z";
 
-    private static final long TOLERANCE_MILIS = 6000;
+    private static final long TOLERANCE_MILIS = 16000;
 
-    private static final int PARALLEL_RUNS_COUNT = 20;
+    private static final int PARALLEL_RUNS_COUNT = 10;
 
     private static final String REPO_OWNER = "mhahsler";
 

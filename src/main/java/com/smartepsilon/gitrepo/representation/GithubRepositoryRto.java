@@ -82,9 +82,12 @@ public class GithubRepositoryRto implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("cloneUrl", this.cloneUrl).add("description", this.description)
-                .add("stars", this.getStars()).add("fullName", this.fullName).add("createdAt", this.createdAt)
+        return MoreObjects.toStringHelper(this)
+                .add("cloneUrl", this.cloneUrl)
+                .add("description", this.description)
+                .add("stars", this.getStars())
+                .add("fullName", this.fullName)
+                .add("createdAt", this.createdAt)
                 .toString();
     }
-
 }

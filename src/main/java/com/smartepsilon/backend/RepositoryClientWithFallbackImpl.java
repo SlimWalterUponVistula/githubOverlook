@@ -41,40 +41,40 @@ public class RepositoryClientWithFallbackImpl implements RepositoryClientWithFal
 
     @Override
     public Response getRepository(final String owner, final String id) {
-        return tryTimesPrimary(owner, id, retriesThreshold)
-                   .orElseGet(() -> tryTimesWithFallback(owner, id, retriesThreshold)
+        return tryObtainingResponseWithAtMostGivenNumberOfTrials(owner, id, retriesThreshold)
+                   .orElseGet(() -> tryObtainingFallbackResponse(owner, id, retriesThreshold)
                                         .orElseThrow(() -> new ExternalServiceUnhealthy(retriesThreshold)));
     }
     
-    private Optional<Response> tryTimesPrimary(String owner, 
-                                               String id, 
-                                               int nTimes) {
+    private Optional<Response> tryObtainingResponseWithAtMostGivenNumberOfTrials(String owner, 
+                                                                                 String id, 
+                                                                                 int trialsNumber) {
         Callable<Response> pureTask = supplyTaskDefinition(owner, id);
-        return nTimesAtMost(owner, id, nTimes, pureTask);
+        return callServiceWithAtMostTrialsCountTimes(owner, id, trialsNumber, pureTask);
     }
 
-    private Optional<Response> tryTimesWithFallback(String owner, 
-                                                    String id, 
-                                                    int nTimes) {
+    private Optional<Response> tryObtainingFallbackResponse(String owner, 
+                                                            String id,
+                                                            int trialsCount) {
         Callable<Response> fallbackTask = supplyFallbackTask(owner, id);
-        return nTimesAtMost(owner, id, nTimes, fallbackTask);
+        return callServiceWithAtMostTrialsCountTimes(owner, id, trialsCount, fallbackTask);
     }
 
-    private Optional<Response> nTimesAtMost(String owner, 
+    private Optional<Response> callServiceWithAtMostTrialsCountTimes(String owner, 
                                             String id, 
-                                            int n,
+                                            int trialsCount,
                                             Callable<Response> task) {
-        
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Supplier<Optional<Response>> catchingSupplier = () -> {
             try {
                 return Optional.of(getResponseSupplier(executor, task).supply());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                // logging of e ommitted for clarity
                 return Optional.empty();
             }
         };
         return Stream.iterate(catchingSupplier, i -> i)
-                .limit(n)
+                .limit(trialsCount)
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .findFirst()
